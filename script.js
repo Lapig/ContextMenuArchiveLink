@@ -1,41 +1,19 @@
-chrome.runtime.sendMessage(null, { op: "clear-title" }, null, function () { });
+//@author pig
+//not fda approved
 
 
-chrome.runtime.sendMessage(null, { op: "load" }, null, function (state) {
-  var done = 0;
-function walk(node) {
-  // I stole this function from someone who stole it from:
-  // http://is.gd/mwZp7E
-
-  var child, next;
-  switch (node.nodeType) {
-    case 1:
-    case 9:
-    case 11:
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-        walk(child);
-        child = next;
-      }
-      break;
-
-    case 3:
-      handleText(node);
-      break;
-  }
+// Archive context callback
+function genericOnClick(info, tab) {
+  window.open("http://archive.is/?url="+info.linkUrl,"self")
+  //console.log("info: " + JSON.stringify(info));
+  //console.log("tab: " + JSON.stringify(tab));
+  /*chrome.tabs.create({  
+    url: "http://www.google.com/search?q=" + info.selectionText,
+  }); */
 }
 
-function handleText(textNode) {
-
-  var n=textNode.nodeValue;
-
-  n=n.replace("points", "test");
-  textNode.nodeValue=n;
-}
-if(!done)
-{
-  done=1;
-  walk(document.body);
-} 
-});
+// Create one test item for each context type.
+var title = "Archive link";
+chrome.contextMenus.create({
+  "title": title, "contexts":["link"],
+  "onclick": genericOnClick});
